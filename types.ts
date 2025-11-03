@@ -4,14 +4,12 @@ export interface ToastMessage {
   type: 'success' | 'error';
 }
 
-export interface CartoonVersion {
-  id: string;
-  cartoonImage: string;
+export interface Theme {
+  name: string;
+  description: string;
   prompt: string;
+  imageUrl: string;
 }
 
-export interface GalleryItem {
-  id: string;
-  originalImage: string;
-  versions: CartoonVersion[];
-}
+// This line is crucial to ensure the file is treated as a module in a buildless environment.
+export {};

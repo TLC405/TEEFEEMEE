@@ -44,23 +44,22 @@ export const LoadingOverlay: React.FC<{ loadingMessage: string }> = ({ loadingMe
     }, [loadingMessage])
 
     return (
-        <div role="status" aria-live="polite" className="fixed inset-0 z-[60] w-full h-full flex flex-col items-center justify-center text-center p-4 bg-gray-900/90 backdrop-blur-sm animate-fade-in">
-             <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)]/20 via-transparent to-[var(--color-accent)]/20 opacity-50 animate-pulse"></div>
+        <div role="status" aria-live="polite" className="fixed inset-0 z-[60] w-full h-full flex flex-col items-center justify-center text-center p-4 bg-[var(--color-primary)]/90 backdrop-blur-sm animate-fade-in">
             <div className="relative z-10 w-full max-w-lg">
                 <h3 
-                  className="font-cartoon text-6xl text-white mt-6 transform -skew-x-12" 
-                  style={{ textShadow: '3px 3px 0 #ef4444, 6px 6px 0 #000' }}
+                  className="font-cartoon text-7xl text-white mt-6" 
+                  style={{ textShadow: '4px 4px 0 var(--color-accent), 8px 8px 0 #000' }}
                 >
                     Working Magic...
                 </h3>
                 
-                <div className="mt-8 h-12 flex items-center justify-center font-mono text-lg text-[var(--color-secondary)]">
-                    <p className="typewriter-text">{typedMessage}</p>
+                <div className="mt-8 h-8 flex items-center justify-center font-bold text-lg text-white">
+                    <p style={{textShadow: '2px 2px 0 #000'}}>{typedMessage}</p>
                 </div>
 
-                <div className="w-full bg-black/30 rounded-full h-4 mt-6">
+                <div className="w-full bg-black/30 rounded-full h-5 mt-4 border-2 border-black">
                     <div 
-                        className="bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 h-4 rounded-full transition-all duration-500 ease-out" 
+                        className="bg-[var(--color-accent)] h-full rounded-full transition-all duration-500 ease-out" 
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>

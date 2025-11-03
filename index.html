@@ -9,115 +9,65 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@400;500;600;700;800&family=Luckiest+Guy&family=Creepster&family=Comic+Neue:wght@700&family=Permanent+Marker&display=swap');
       :root {
-        --color-primary: #38bdf8;
-        --color-secondary: #7dd3fc;
-        --color-accent: #d946ef;
-        --color-background: #111827;
-        --color-surface: #1f2937;
-        --color-text-primary: #f9fafb;
-        --color-text-secondary: #9ca3af;
-        --color-text-on-primary: #ffffff;
+        --color-primary: #00a5e1; /* Simpsons Blue */
+        --color-secondary: #ffdd00; /* Simpsons Yellow */
+        --color-accent: #f83d78; /* Simpsons Pink */
+        --color-background: var(--color-secondary);
+        --color-surface: #ffffff;
+        --color-text-primary: #000000;
+        --color-text-secondary: #4f4f4f;
+        --color-text-on-primary: #FFFFFF;
       }
       body {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Comic Neue', 'Poppins', sans-serif;
         background-color: var(--color-background);
+        background-image: radial-gradient(var(--color-primary) 1px, transparent 1px);
+        background-size: 10px 10px;
+        color: var(--color-text-primary);
         transition: background-color 0.3s ease;
-        position: relative;
-        z-index: 0;
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-      }
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzExMTgyNyI+PC9yZWN0PjxnIGZpbGw9IiMxZjI5MzciPjxwYXRoIGQ9Ik0zNCAzM2MxMS42IDAgMjEtOS40IDIxLTIxcy05LjQtMjEtMjEtMjEtMjEgOS40LTIxIDIxIDkuNCAyMSAyMSAyMXptLTYtMjFjMC0zLjMgMi43LTYgNi02czYgMi43IDYgNi0yLjcgNi02IDYtNi0yLjctNi02eiI+PC9wYXRoPjxwYXRoIGQ9Ik03NSA4NGM3LjcgMCAxNC02LjMgMTQtMTRzLTYuMy0xNC0xNC0xNC0xNCA2LjMtMTQgMTQgNi4zIDE4IDE0IDE0em0tNC0xNGMwLTIuMiAxLjgtNCA0LTRzNCAxLjggNCA0LTEuOCA0LTQgNC00LTEuOC00LTR6Ij48L3BhdGg+PHBhdGggZD0iTTMwIDc1YzAgNC40IDMuNiA4IDggOHM4LTMuNiA4LTgtMy42LTgtOC04LTggMy42LTggOHoiPjwvcGF0aD48cGF0aCBkPSJNNjMgNDFjMCAyLjggMi4yIDUgNSA1czUtMi4yIDUtNS0yLjItNS01LTUtNSAyLjItNSA1eiI+PC9wYXRoPjxwYXRoIGQ9Ik05MCAyMWMwIDMuOSAzLjEgNyA3IDdzNy0zLjEgNy03LTMuMS03LTctNy03IDMuMS03IDd6Ij48L3BhdGg+PC9nPjwvc3ZnPg==');
-        background-size: 100px;
-        opacity: 0.2;
-        z-index: -2;
-        transition: opacity 0.5s ease;
-      }
-      body.custom-bg::before {
-        opacity: 0;
-      }
-      body::after {
-          content: '';
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: var(--color-background);
-          opacity: 0.9;
-          z-index: -1;
-          transition: opacity 0.5s ease;
-      }
-      body.custom-bg::after {
-        opacity: 0.8;
-        background: #000;
       }
       .font-cartoon {
-        font-family: 'Bangers', cursive;
-        letter-spacing: 2px;
-        -webkit-text-stroke: 1px black;
-        paint-order: stroke fill;
+        font-family: 'Luckiest Guy', cursive;
+        letter-spacing: 1px;
       }
-      @keyframes fadeIn {
+      .simpson-panel {
+        background-color: var(--color-surface);
+        border: 4px solid #000;
+        border-radius: 12px;
+        box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+      }
+       @keyframes popIn {
+        0% { opacity: 0; transform: scale(0.9); }
+        80% { opacity: 1; transform: scale(1.05); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      .animate-pop-in {
+        animation: popIn 0.4s ease-out forwards;
+      }
+      @keyframes fade-in {
         from { opacity: 0; }
         to { opacity: 1; }
       }
       .animate-fade-in {
-        animation: fadeIn 0.3s ease-out forwards;
+        animation: fade-in 0.5s ease-in-out forwards;
       }
-      @keyframes slideUp {
+      @keyframes slide-up {
         from { transform: translateY(20px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
       }
       .animate-slide-up {
-         animation: slideUp 0.3s ease-out forwards;
+        animation: slide-up 0.4s ease-out forwards;
       }
-      @keyframes pulseGlow {
-        0%, 100% {
-          transform: scale(1);
-          filter: drop-shadow(0 0 5px var(--color-primary));
-        }
-        50% {
-          transform: scale(1.1);
-          filter: drop-shadow(0 0 15px var(--color-primary));
-        }
+      button {
+        transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
       }
-      .animate-pulse-glow {
-        animation: pulseGlow 2.5s infinite ease-in-out;
+      .logo-eye:hover {
+        animation: eye-wiggle 0.5s ease-in-out infinite;
       }
-       @keyframes fadeInText {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-fade-in-text {
-        animation: fadeInText 0.5s 0.2s ease-out forwards;
-        opacity: 0;
-      }
-      @keyframes typing {
-        from { width: 0 }
-        to { width: 100% }
-      }
-      @keyframes blink-caret {
-        from, to { border-color: transparent }
-        50% { border-color: var(--color-secondary); }
-      }
-      .typewriter-text {
-        overflow: hidden;
-        border-right: .15em solid var(--color-secondary);
-        white-space: nowrap;
-        margin: 0 auto;
-        letter-spacing: .1em;
-        animation: 
-          typing 2s steps(40, end),
-          blink-caret .75s step-end infinite;
+      @keyframes eye-wiggle {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(15deg); }
+        75% { transform: rotate(-15deg); }
       }
     </style>
   <script type="importmap">
@@ -131,9 +81,315 @@
 }
 </script>
 </head>
-  <body class="text-[var(--color-text-primary)]">
+  <body>
     <div id="root"></div>
+    <audio id="background-music" loop src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjQ1LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWW5mbwAAAA8AAAAFAAAAZABoAHQAdABwADoALwAvAG0AZQBpAGwAdQAuAGMAcgAvAG0AdQBzAGkAYwAvADEAMAA4ADkAMwA1ADkAMQA4ADgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - t- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -- --/+MR/AAAAAAFwAQAAAAIAAAAYABwADAAIAAhESExQVFhEgZBIlJygZGx8f/aAAgBAQABPyH/AHW/P5/5z/9k="></audio>
     <script type="module" src="/index.tsx"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
   </body>
 </html>
+--- END OF FILE index.html ---
+--- START OF FILE App.tsx ---
+import React from 'react';
+import { Header } from './components/Header';
+import { ToastContainer } from './components/Toast';
+import { useToast } from './hooks/useToast';
+import { AudioControl } from './components/AudioControl';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { CartoonizerPage } from './components/CartoonizerPage';
+
+const App: React.FC = () => {
+  const { toasts, addToast, removeToast } = useToast();
+
+  return (
+    <div className="min-h-screen flex flex-col bg-transparent transition-colors duration-300">
+      <ToastContainer toasts={toasts} onDismiss={removeToast} />
+      <AudioControl />
+      
+      <Header />
+
+      <main className="flex-grow w-full max-w-7xl mx-auto p-4 flex flex-col items-center">
+        <ErrorBoundary>
+          <CartoonizerPage addToast={addToast} />
+        </ErrorBoundary>
+      </main>
+
+      <footer className="text-center p-4 text-[var(--color-text-primary)] text-sm shrink-0">
+        <p className='font-bold' style={{textShadow: '1px 1px 2px rgba(0,0,0,0.5)'}}>&copy; 2024 TeefeeMe. Transform your reality.</p>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+--- END OF FILE App.tsx ---
+--- START OF FILE components/Header.tsx ---
+import React from 'react';
+
+export const Header: React.FC = React.memo(() => {
+    return (
+        <header className="shrink-0 bg-[var(--color-primary)] border-b-4 border-black shadow-[0_4px_8px_rgba(0,0,0,0.2)]">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="flex items-center justify-center h-20">
+                    <h1 className="font-cartoon text-6xl text-[var(--color-secondary)]" style={{textShadow: "4px 4px 0px #000"}}>
+                        Teef<span className="inline-block logo-eye">e</span>eMe
+                    </h1>
+                </div>
+            </div>
+        </header>
+    );
+});
+--- END OF FILE components/Header.tsx ---
+--- START OF FILE components/ResultDisplay.tsx ---
+import React from 'react';
+
+export const ResultDisplay: React.FC<{
+    resultDataUrl: string | null;
+    error: string | null;
+}> = ({ resultDataUrl, error }) => {
+    
+    const ErrorDisplay = ({ message }: { message: string }) => (
+      <div role="alert" className="w-full aspect-square flex flex-col items-center justify-center text-center p-4 bg-red-100/80 text-red-800 rounded-lg border-2 border-black">
+        <svg className="w-16 h-16 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <h3 className="font-cartoon text-xl text-black mt-4">D'oh! Generation Failed</h3>
+        <p className="mt-1 text-sm text-red-900 max-w-md">{message}</p>
+      </div>
+    );
+
+    const Placeholder = () => (
+      <div className="w-full aspect-square flex flex-col items-center justify-center text-center text-[var(--color-text-secondary)] p-8 bg-gray-100/50 rounded-lg border-2 border-dashed border-gray-400">
+          <svg className="w-20 h-20 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-12h2v4h-2zm0 6h2v2h-2z"/></svg>
+          <h2 className="font-cartoon text-2xl mt-4 text-black">Your art will appear here!</h2>
+          <p className="mt-1">Select a style from the panel to generate your image.</p>
+      </div>
+    );
+
+    return (
+        <div className="w-full min-h-[300px] flex items-center justify-center relative overflow-hidden rounded-lg">
+            {error ? <ErrorDisplay message={error} /> : resultDataUrl ? (
+                <img src={resultDataUrl} alt="Generated result" className="rounded-lg w-full aspect-square object-cover border-2 border-black animate-fade-in" />
+            ) : <Placeholder />}
+        </div>
+    );
+}
+--- END OF FILE components/ResultDisplay.tsx ---
+--- START OF FILE components/ThemeSelector.tsx ---
+import React from 'react';
+import { Theme } from '../types';
+
+export const ThemeSelector: React.FC<{
+    themes: Theme[];
+    onThemeSelect: (theme: Theme) => void;
+    isLoading: boolean;
+    selectedTheme: Theme | null;
+}> = ({ themes, onThemeSelect, isLoading, selectedTheme }) => {
+    return (
+        <div className="w-full p-1 animate-fade-in">
+            <h2 className="font-cartoon text-4xl text-center mb-4 text-[var(--color-primary)]" style={{textShadow: '2px 2px 0 #000'}}>Choose a Style</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {themes.map((theme) => {
+                    const isSelected = isLoading && theme.name === selectedTheme?.name;
+                    return (
+                        <button
+                            key={theme.name}
+                            onClick={() => onThemeSelect(theme)}
+                            disabled={isLoading}
+                            className={`group relative text-left h-24 sm:h-32 rounded-lg transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50 border-2 border-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-[var(--color-accent)] active:translate-y-px overflow-hidden shadow-[4px_4px_0px_#000] ${isSelected ? 'ring-4 ring-[var(--color-accent)] ring-offset-2 ring-offset-white' : ''}`}
+                            style={{
+                              backgroundImage: `url(${theme.imageUrl})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                            }}
+                        >
+                            <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-300 p-2 sm:p-3 flex flex-col justify-end">
+                              <h3 className="font-bold text-base sm:text-lg text-white leading-tight" style={{textShadow: '1px 1px 2px #000'}}>{theme.name}</h3>
+                              <p className="hidden sm:block text-xs text-gray-200" style={{textShadow: '1px 1px 2px #000'}}>{theme.description}</p>
+                            </div>
+                        </button>
+                    )
+                })}
+            </div>
+        </div>
+    );
+};
+--- END OF FILE components/ThemeSelector.tsx ---
+--- START OF FILE components/CartoonizerPage.tsx ---
+import React, { useState, useEffect } from 'react';
+import { Theme } from '../types';
+import { LOADING_MESSAGES, THEMES } from '../constants';
+import { LoadingOverlay } from './LoadingOverlay';
+import { Uploader } from './Uploader';
+import { GeneratorPanel } from './GeneratorPanel';
+import { generateCartoonImage } from '../services/geminiService';
+
+interface CartoonizerPageProps {
+  addToast: (message: string, type: 'success' | 'error') => void;
+}
+
+export const CartoonizerPage: React.FC<CartoonizerPageProps> = ({ addToast }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loadingMessage, setLoadingMessage] = useState(LOADING_MESSAGES[0]);
+  
+  const [originalImage, setOriginalImage] = useState<string | null>(null);
+  const [resultImage, setResultImage] = useState<string | null>(null);
+  const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null);
+  
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let intervalId: number | undefined;
+    if (isLoading) {
+      intervalId = window.setInterval(() => {
+        setLoadingMessage(prev => LOADING_MESSAGES[(LOADING_MESSAGES.indexOf(prev) + 1) % LOADING_MESSAGES.length]);
+      }, 2500);
+    }
+    return () => clearInterval(intervalId);
+  }, [isLoading]);
+
+  const handleImageUpload = (dataUrl: string) => {
+    setOriginalImage(dataUrl);
+    setResultImage(null);
+    setError(null);
+    setSelectedTheme(null);
+    addToast('Image uploaded! Now pick a style.', 'success');
+  };
+
+  const handleThemeSelect = async (theme: Theme) => {
+    if (!originalImage) {
+        addToast('Please upload an image first!', 'error');
+        return;
+    }
+    
+    setSelectedTheme(theme);
+    setIsLoading(true);
+    setError(null);
+    setResultImage(null);
+
+    try {
+      const newImageUrl = await generateCartoonImage(originalImage, theme);
+      setResultImage(newImageUrl);
+      addToast(`Successfully generated in ${theme.name} style!`, 'success');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred.';
+      console.error('Error generating image:', errorMessage);
+      addToast(errorMessage, 'error');
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReset = () => {
+    setOriginalImage(null);
+    setResultImage(null);
+    setError(null);
+    setSelectedTheme(null);
+    addToast('Ready for a new creation!', 'success');
+  }
+
+  const handleDownload = () => {
+    if (!resultImage) return;
+    const link = document.createElement('a');
+    link.href = resultImage;
+    link.download = `teefeeme_${selectedTheme?.name.toLowerCase().replace(' ', '_') ?? 'art'}_${new Date().getTime()}.jpeg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  return (
+    <>
+      {isLoading && <LoadingOverlay loadingMessage={loadingMessage} />}
+      {!originalImage ? (
+          <div className="w-full max-w-2xl mt-10 animate-pop-in">
+              <Uploader onImageUpload={handleImageUpload} />
+          </div>
+      ) : (
+          <GeneratorPanel 
+            originalImage={originalImage}
+            resultImage={resultImage}
+            error={error}
+            themes={THEMES}
+            selectedTheme={selectedTheme}
+            isLoading={isLoading}
+            onThemeSelect={handleThemeSelect}
+            onReset={handleReset}
+            onDownload={handleDownload}
+          />
+      )}
+    </>
+  );
+};
+--- END OF FILE components/CartoonizerPage.tsx ---
+--- START OF FILE components/GeneratorPanel.tsx ---
+import React from 'react';
+import { Theme } from '../types';
+import { ResultDisplay } from './ResultDisplay';
+import { ThemeSelector } from './ThemeSelector';
+
+
+interface GeneratorPanelProps {
+    originalImage: string;
+    resultImage: string | null;
+    error: string | null;
+    themes: Theme[];
+    selectedTheme: Theme | null;
+    isLoading: boolean;
+    onThemeSelect: (theme: Theme) => void;
+    onReset: () => void;
+    onDownload: () => void;
+}
+
+export const GeneratorPanel: React.FC<GeneratorPanelProps> = ({
+    originalImage,
+    resultImage,
+    error,
+    themes,
+    selectedTheme,
+    isLoading,
+    onThemeSelect,
+    onReset,
+    onDownload
+}) => {
+    return (
+        <div className="w-full flex flex-col items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full mt-4">
+
+                {/* Original Image Display */}
+                <div className="simpson-panel p-4 animate-pop-in flex flex-col">
+                    <h2 className="font-cartoon text-3xl text-center mb-4 text-[var(--color-primary)]" style={{textShadow: '2px 2px 0 #000'}}>Original</h2>
+                    <div className="aspect-square w-full">
+                       <img src={originalImage} alt="User upload" className="rounded-lg w-full h-full object-cover border-2 border-black" />
+                    </div>
+                </div>
+                
+                {/* Controls Column */}
+                <div className="simpson-panel p-4 animate-pop-in flex flex-col justify-between" style={{ animationDelay: '100ms' }}>
+                    <ThemeSelector themes={themes} onThemeSelect={onThemeSelect} isLoading={isLoading} selectedTheme={selectedTheme} />
+                    <div className="mt-4 flex flex-col space-y-3">
+                         <button 
+                            onClick={onDownload} 
+                            disabled={!resultImage || isLoading}
+                            className="font-cartoon bg-[var(--color-accent)] text-2xl text-white py-3 px-6 rounded-lg border-2 border-black hover:bg-pink-600 transition-all active:translate-y-px shadow-[4px_4px_0px_#000] disabled:bg-gray-400 disabled:shadow-none disabled:translate-y-0">
+                            Download Art
+                        </button>
+                        <button 
+                            onClick={onReset} 
+                            disabled={isLoading}
+                            className="font-cartoon bg-gray-200 text-lg text-gray-800 py-2 px-6 rounded-lg border-2 border-black hover:bg-gray-300 transition-all active:translate-y-px shadow-[4px_4px_0px_#000] disabled:bg-gray-400 disabled:shadow-none disabled:translate-y-0">
+                            Start Over
+                        </button>
+                    </div>
+                </div>
+
+                {/* Result Display */}
+                <div className="simpson-panel p-4 animate-pop-in flex flex-col" style={{ animationDelay: '200ms' }}>
+                   <h2 className="font-cartoon text-3xl text-center mb-4 text-[var(--color-accent)]" style={{textShadow: '2px 2px 0 #000'}}>TeefeeMe Version</h2>
+                   <ResultDisplay resultDataUrl={resultImage} error={error} />
+                </div>
+            </div>
+        </div>
+    );
+}
+--- END OF FILE components/GeneratorPanel.tsx ---
+</changes>
+```
