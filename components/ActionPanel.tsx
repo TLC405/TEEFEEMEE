@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CARTOON_STYLES, CartoonStyle, ASPECT_RATIOS } from '../constants';
 import { AppMode } from '../App';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const modes: { id: AppMode; label: string, icon: string }[] = [
     { id: 'cartoonify', label: 'Cartoonify', icon: '🎨' },
@@ -20,6 +21,8 @@ export const ActionPanel: React.FC<{
     onGenerate: (prompt: string, aspectRatio: string) => void;
     onAnalyze: (prompt: string, useThinking: boolean) => void;
     analysisResult: string | null;
+    activeTheme: Record<string, string>;
+    onThemeChange: (theme: Record<string, string>) => void;
 }> = ({ 
     mode, 
     onModeChange, 
@@ -30,7 +33,9 @@ export const ActionPanel: React.FC<{
     onEdit,
     onGenerate,
     onAnalyze,
-    analysisResult
+    analysisResult,
+    activeTheme,
+    onThemeChange,
 }) => {
     
     // Internal state for controlled components in each panel
@@ -73,12 +78,12 @@ export const ActionPanel: React.FC<{
                         </div>
                         {!photoUploaded && <p className="text-center text-sm text-[var(--color-text-secondary)] font-semibold p-2 bg-black/20 rounded-md">Please upload a photo to start cartoonifying.</p>}
                         <div className={!photoUploaded ? 'opacity-40' : ''}>
-                            <label className="font-cartoon block text-2xl text-[var(--color-secondary)] mb-2 transition-colors duration-300">Adult Animation</label>
-                            <StyleGrid styles={CARTOON_STYLES.adultShows} />
-                            <label className="font-cartoon block text-2xl text-[var(--color-secondary)] mb-2 mt-4 transition-colors duration-300">Kid-Friendly</label>
-                            <StyleGrid styles={CARTOON_STYLES.kidShows} />
-                            <label className="font-cartoon block text-2xl text-[var(--color-secondary)] mb-2 mt-4 transition-colors duration-300">Classic Toons</label>
-                            <StyleGrid styles={CARTOON_STYLES.classicShows} />
+                          {Object.entries(CARTOON_STYLES).map(([category, styles], index) => (
+                              <React.Fragment key={category}>
+                                  <label className={`font-cartoon block text-2xl text-[var(--color-secondary)] mb-2 ${index > 0 ? 'mt-4' : ''} transition-colors duration-300`}>{category}</label>
+                                  <StyleGrid styles={styles} />
+                              </React.Fragment>
+                          ))}
                         </div>
                     </div>
                 );
@@ -154,6 +159,7 @@ export const ActionPanel: React.FC<{
                 ))}
             </div>
             {renderPanelContent()}
+            <ThemeSwitcher activeTheme={activeTheme} onThemeChange={onThemeChange} />
         </div>
     );
 };

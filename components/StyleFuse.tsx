@@ -33,7 +33,7 @@ interface FusedStyle {
     prompt: string;
 }
 
-const allStyles = [...CARTOON_STYLES.adultShows, ...CARTOON_STYLES.kidShows, ...CARTOON_STYLES.classicShows];
+const allStyles = Object.values(CARTOON_STYLES).flat();
 
 export const StyleFuse: React.FC<{
     onApplyStyle: (prompt: string) => void;
