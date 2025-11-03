@@ -1,8 +1,9 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { ALLOWED_MIME_TYPES, MAX_FILE_SIZE_BYTES, MAX_FILE_SIZE_MB } from '../constants';
+import { AppMode } from '../App';
 
 export const TopPanel: React.FC<{
+  activeMode: AppMode;
   photoPreview: string | null;
   isLoading: boolean;
   loadingMessage: string;
@@ -11,6 +12,7 @@ export const TopPanel: React.FC<{
   onSave: () => void;
   addToast: (message: string, type: 'success' | 'error') => void;
 }> = ({
+  activeMode,
   photoPreview,
   isLoading,
   loadingMessage,
@@ -54,45 +56,7 @@ export const TopPanel: React.FC<{
     }
   }
 
-  const DisplayContent = () => {
-    if (isLoading) {
-      return (
-        <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
-          {photoPreview && <img src={photoPreview} alt="Processing" className="absolute inset-0 w-full h-full object-cover rounded-md opacity-20" />}
-          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[var(--color-primary)] mx-auto transition-colors duration-300"></div>
-          <p className="mt-4 font-cartoon text-2xl text-gray-300">{loadingMessage}</p>
-        </div>
-      );
-    }
-    if (resultDataUrl && photoPreview) {
-      return (
-        <div className="w-full h-full grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            <div className="flex flex-col items-center text-center">
-                <h2 className="font-cartoon text-3xl text-[var(--color-secondary)] mb-2">Original</h2>
-                <div className="w-full aspect-square bg-black/20 rounded-lg border-2 border-black overflow-hidden">
-                    <img src={photoPreview} alt="Original" className="w-full h-full object-cover" />
-                </div>
-            </div>
-            <div className="flex flex-col items-center text-center">
-                <h2 className="font-cartoon text-3xl text-[var(--color-primary)] mb-2">Toonified!</h2>
-                <div className="w-full aspect-square bg-black/20 rounded-lg border-2 border-black overflow-hidden">
-                    <img src={resultDataUrl} alt="Cartoonified" className="w-full h-full object-cover" />
-                </div>
-            </div>
-        </div>
-      );
-    }
-    if (photoPreview) {
-      return (
-        <div className="relative w-full max-w-lg h-full group flex items-center justify-center">
-          <img src={photoPreview} alt="Uploaded" className="max-w-full max-h-full object-contain" />
-           <button onClick={() => onFileUpdate(null)} className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-opacity">
-               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-           </button>
-        </div>
-      );
-    }
-    return (
+  const UploadPlaceholder = () => (
       <div 
         {...dragHandlers} 
         onClick={() => fileInputRef.current?.click()}
@@ -105,7 +69,74 @@ export const TopPanel: React.FC<{
             <p className="text-xs mt-1 text-gray-600">PNG, JPG, WEBP up to {MAX_FILE_SIZE_MB}MB</p>
         </div>
       </div>
-    );
+  );
+
+  const DisplayContent = () => {
+    if (isLoading) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
+          {(photoPreview || resultDataUrl) && <img src={photoPreview || resultDataUrl} alt="Processing" className="absolute inset-0 w-full h-full object-cover rounded-md opacity-20" />}
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-[var(--color-primary)] mx-auto transition-colors duration-300"></div>
+          <p className="mt-4 font-cartoon text-2xl text-gray-300">{loadingMessage}</p>
+        </div>
+      );
+    }
+    
+    // Result views
+    if (resultDataUrl) {
+      if ((activeMode === 'cartoonify' || activeMode === 'edit') && photoPreview) {
+        return (
+          <div className="w-full h-full grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <div className="flex flex-col items-center text-center">
+                  <h2 className="font-cartoon text-3xl text-[var(--color-secondary)] mb-2">Original</h2>
+                  <div className="w-full aspect-square bg-black/20 rounded-lg border-2 border-black overflow-hidden">
+                      <img src={photoPreview} alt="Original" className="w-full h-full object-cover" />
+                  </div>
+              </div>
+              <div className="flex flex-col items-center text-center">
+                  <h2 className="font-cartoon text-3xl text-[var(--color-primary)] mb-2">Result</h2>
+                  <div className="w-full aspect-square bg-black/20 rounded-lg border-2 border-black overflow-hidden">
+                      <img src={resultDataUrl} alt="Result" className="w-full h-full object-cover" />
+                  </div>
+              </div>
+          </div>
+        );
+      }
+      if (activeMode === 'generate') {
+         return (
+            <div className="flex flex-col items-center text-center w-full max-w-lg">
+                <h2 className="font-cartoon text-3xl text-[var(--color-primary)] mb-2">Generated Image</h2>
+                <div className="w-full aspect-square bg-black/20 rounded-lg border-2 border-black overflow-hidden">
+                    <img src={resultDataUrl} alt="Generated" className="w-full h-full object-cover" />
+                </div>
+            </div>
+         );
+      }
+    }
+    
+    // Pre-action views
+    if (photoPreview) {
+      return (
+        <div className="relative w-full max-w-lg h-full group flex items-center justify-center">
+          <img src={photoPreview} alt="Uploaded" className="max-w-full max-h-full object-contain" />
+           <button onClick={() => onFileUpdate(null)} className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/80 transition-opacity">
+               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+           </button>
+        </div>
+      );
+    }
+    
+    // Default initial view
+    if (activeMode === 'generate') {
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-center text-center text-gray-500 p-8 bg-black/20 rounded-lg">
+                <h2 className="font-cartoon text-5xl text-gray-400" style={{textShadow: '3px 3px 0 #000'}}>Image Generation</h2>
+                <p className="font-semibold text-gray-500 mt-2">Use the controls below to describe the image you want to create.</p>
+            </div>
+        );
+    }
+    
+    return <UploadPlaceholder />;
   };
   
   return (

@@ -5,6 +5,8 @@ export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 export const GALLERY_STORAGE_KEY = 'teefeeme_gallery';
 
+export const ASPECT_RATIOS = ["1:1", "16:9", "9:16", "4:3", "3:4"];
+
 export const DEFAULT_THEME = {
   '--color-primary': '#a3e635', // lime-400
   '--color-secondary': '#bef264', // lime-300
