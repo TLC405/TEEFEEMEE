@@ -6,7 +6,7 @@ export const Header: React.FC = React.memo(() => {
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex items-center justify-center h-20">
                     <h1 className="font-cartoon text-6xl text-[var(--color-secondary)]" style={{textShadow: "4px 4px 0px #000"}}>
-                        TeefeeMe
+                        Teef<span className="inline-block logo-eye">e</span>eMe
                     </h1>
                 </div>
             </div>

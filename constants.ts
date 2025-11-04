@@ -1,5 +1,3 @@
-
-
 export const MAX_FILE_SIZE_MB = 10;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -73,40 +71,10 @@ export const THEMES = [
     imageUrl: 'https://images.pexels.com/photos/161251/boardwalk-pier-beach-sea-161251.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
   },
   {
-    name: 'Archer',
-    description: 'Enter the danger zone!',
-    prompt: `Completely transform this image into the sleek, comic-book-inspired art style of 'Archer'. The final output must be sharp and graphic. The style must be defined by thick, black outlines, sharp angles, and a look reminiscent of mid-century comics. Characters should be rendered with strong jawlines and a clean, graphic look. Backgrounds must be detailed but rendered with the same heavy outlines. No trace of the original photo's style should remain. Strictly avoid: ${NEGATIVE_PROMPT}`,
-    imageUrl: 'https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  },
-  {
     name: 'Studio Ghibli',
     description: 'Enter a world of wonder.',
     prompt: `Completely overhaul the image into the breathtaking, hand-painted aesthetic of a Studio Ghibli film. The final output must look like a scene from a Hayao Miyazaki masterpiece. Characters should be rendered with soft, expressive features and a gentle, innocent quality. The background must be transformed into a lush, incredibly detailed, and beautiful watercolor landscape, filled with a sense of magic and nostalgia. Use a rich, natural color palette. No trace of the original photo's style should remain. Strictly avoid: ${NEGATIVE_PROMPT}`,
     imageUrl: 'https://images.pexels.com/photos/381739/pexels-photo-381739.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  },
-  {
-    name: 'Scooby-Doo',
-    description: 'Solve a mystery, gang!',
-    prompt: `Zoinks! Completely redraw the image in the classic, spooky-yet-fun art style of Hanna-Barbera's 'Scooby-Doo, Where Are You!'. The final scene must look like a cel from the original 1960s cartoon. Characters should have simple, bold outlines and a slightly goofy look. The background must be a classic haunted location (like a spooky mansion or foggy marsh) with a limited, muted color palette, especially with greens, purples, and blues. No trace of the original photo's style should remain. Strictly avoid: ${NEGATIVE_PROMPT}`,
-    imageUrl: 'https://images.pexels.com/photos/1774931/pexels-photo-1774931.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  },
-  {
-    name: 'Powerpuff Girls',
-    description: 'Sugar, spice, & everything nice!',
-    prompt: `Transform the image into the bold, graphic, and super-cute art style of 'The Powerpuff Girls'. The result must look like a scene straight out of Townsville. This style is defined by ultra-thick black outlines, simple geometric shapes, and no fine detail. Characters must be stylized with large, circular eyes and simplified bodies. Use a palette of bright, flat, pop-art colors. No trace of the original photo's style should remain. Strictly avoid: ${NEGATIVE_PROMPT}`,
-    imageUrl: 'https://images.pexels.com/photos/224924/pexels-photo-224924.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  },
-  {
-    name: 'Futurama',
-    description: 'Welcome to the World of Tomorrow!',
-    prompt: `Good news, everyone! Convert the entire image into the retro-futuristic world of 'Futurama'. This must look identical to Matt Groening's sci-fi animation style. Characters should have the characteristic overbite and large eyes. The setting must be transformed into New New York, complete with flying cars, tube transportation systems, aliens, and robots. Use the show's distinct color palette and 2D animated look. No trace of the original photo's style should remain. Strictly avoid: ${NEGATIVE_PROMPT}`,
-    imageUrl: 'https://images.pexels.com/photos/2088205/pexels-photo-2088205.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-  },
-  {
-    name: 'Avatar: The Last Airbender',
-    description: 'Master the four elements.',
-    prompt: `Completely recreate the image in the epic, anime-influenced style of 'Avatar: The Last Airbender'. The final art must capture the blend of Eastern martial arts and fantasy. Characters should be drawn with an expressive, anime-like quality. The background must be a detailed environment inspired by one of the Four Nations (e.g., Ba Sing Se, the Southern Water Tribe). The style should feel hand-drawn, with clean lines and dynamic poses. No trace of the original photo's style should remain. Strictly avoid: ${NEGATIVE_PROMPT}`,
-    imageUrl: 'https://images.pexels.com/photos/161247/pagan-temple-pagan-temple-myanmar-161247.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
   },
 ];
 

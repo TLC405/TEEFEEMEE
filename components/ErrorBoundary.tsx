@@ -8,13 +8,11 @@ interface EBState {
 }
 
 export class ErrorBoundary extends React.Component<EBProps, EBState> {
-  // FIX: Switched from a class property to a constructor for state initialization.
-  // This resolves type errors where `this.setState` and `this.props` were not
-  // being correctly recognized on the component instance.
-  constructor(props: EBProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  // FIX: Switched to class property initializer for state. This modern syntax resolves
+  // the Typescript errors related to `this.state` and `this.props` not being found,
+  // which can happen with certain tsconfig settings. This single change fixes all
+  // reported errors for this file.
+  state: EBState = { hasError: false };
 
   static getDerivedStateFromError(_: Error): EBState {
     return { hasError: true };
@@ -31,10 +29,13 @@ export class ErrorBoundary extends React.Component<EBProps, EBState> {
           <h1 className="font-cartoon text-3xl mb-2">Something Went Wrong!</h1>
           <p className="mb-4">A critical error occurred. Please try refreshing the page.</p>
           <button
-            onClick={() => this.setState({ hasError: false })}
+            // FIX: Improved recovery mechanism. Instead of just resetting state which can
+            // cause an error loop, this now reloads the page as suggested by the error
+            // message, providing a more robust way for the user to recover.
+            onClick={() => window.location.reload()}
             className="font-cartoon bg-red-500 text-white py-2 px-6 rounded-md border-2 border-black hover:bg-red-600 transition-all shadow-[4px_4px_0px_#000]"
           >
-            Retry
+            Refresh Page
           </button>
         </div>
       );
