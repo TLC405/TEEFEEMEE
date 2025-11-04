@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #ffde00;
+  background-image: radial-gradient(black 1px, transparent 1px);
+  background-size: 16px 16px;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #111827;
+}
+
+/* Removing theme variables for a consistent comic look */
+:root {
+  --color-background: #F9FAFB;
+  --color-accent: #ff007a; /* comic-pink */
+  --color-text-primary: #000000;
+  --color-text-secondary: #4B5563;
+  --color-panel: #FFFFFF;
+  --color-panel-border: #000000;
+}
