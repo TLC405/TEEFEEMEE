@@ -98,6 +98,25 @@ export const generateColorPalette = async (): Promise<{ accent: string; backgrou
     }
 };
 
+const handleGenerativeError = (response: any, fallbackMessage: string): Error => {
+    const blockReason = response.candidates?.[0]?.finishReason;
+    if (blockReason === 'SAFETY') {
+         return new Error("Image generation was blocked for safety reasons. Please try a different image.");
+    }
+    const safetyRatings = response.candidates?.[0]?.safetyRatings;
+    if (safetyRatings?.length > 0) {
+        const blockedCategories = safetyRatings
+            .filter((rating: any) => rating.blocked)
+            .map((rating: any) => rating.category.replace('HARM_CATEGORY_', ''))
+            .join(', ');
+        if (blockedCategories) {
+            return new Error(`Image generation blocked due to: ${blockedCategories}. Please try a different image or style.`);
+        }
+    }
+    return new Error(fallbackMessage);
+}
+
+
 export const cartoonifyImage = async (base64ImageData: string, mimeType: string, stylePrompt: string): Promise<string> => {
     try {
         const imagePart = {
@@ -107,7 +126,7 @@ export const cartoonifyImage = async (base64ImageData: string, mimeType: string,
             },
         };
         const textPart = {
-            text: `Transform this user's photo into a vibrant piece of art. Recreate it in the following artistic style: '${stylePrompt}'. Focus on capturing the essence of the style's iconic line work, color palette, and character design. The final output must be a high-resolution image that creatively interprets the original photo. Do not return text.`,
+            text: `Transform ONLY the people in this user's photo into a vibrant piece of art, while meticulously preserving the original background and all non-human objects. Recreate the people in the following artistic style: '${stylePrompt}'. It is absolutely crucial to maintain the integrity of the background, including scenery, furniture, and any objects on tables. Focus on capturing the essence of the style's iconic line work, color palette, and character design for the people only. The final output must be a high-resolution image that creatively interprets the original photo's subjects while leaving the background untouched. Do not return text.`,
         };
 
         const response = await ai.models.generateContent({
@@ -122,12 +141,7 @@ export const cartoonifyImage = async (base64ImageData: string, mimeType: string,
         if (imageResponsePart?.inlineData?.data) {
             return `data:${imageResponsePart.inlineData.mimeType};base64,${imageResponsePart.inlineData.data}`;
         } else {
-            // Check for safety ratings or other block reasons
-            const blockReason = response.candidates?.[0]?.finishReason;
-            if (blockReason === 'SAFETY') {
-                 throw new Error("Image generation was blocked for safety reasons. Please try a different image.");
-            }
-            throw new Error("The model did not return a valid image. It might be too busy.");
+            throw handleGenerativeError(response, "The model did not return a valid image. It might be too busy.");
         }
     } catch (error) {
         console.error('Error cartoonifying image:', error);
@@ -135,5 +149,40 @@ export const cartoonifyImage = async (base64ImageData: string, mimeType: string,
             throw error;
         }
         throw new Error('Failed to generate the cartoon image. Please try a different image or style.');
+    }
+}
+
+export const enhanceImage = async (base64ImageData: string, mimeType: string): Promise<string> => {
+    try {
+        const imagePart = {
+            inlineData: {
+                data: base64ImageData,
+                mimeType,
+            },
+        };
+        const textPart = {
+            text: "Take this image and add intricate, glowing, filigree-style nano-tech jewelry to the person's face and neck. The jewelry should look elegant, futuristic, and seamlessly integrated with the existing art style. Do not change the rest of the image. The final output must be only the enhanced image.",
+        };
+
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash-image',
+            contents: { parts: [imagePart, textPart] },
+            config: {
+                responseModalities: [Modality.IMAGE],
+            },
+        });
+        
+        const imageResponsePart = response.candidates?.[0]?.content?.parts?.[0];
+        if (imageResponsePart?.inlineData?.data) {
+            return `data:${imageResponsePart.inlineData.mimeType};base64,${imageResponsePart.inlineData.data}`;
+        } else {
+            throw handleGenerativeError(response, "The model did not return a valid enhancement. It might be too busy.");
+        }
+    } catch (error) {
+        console.error('Error enhancing image:', error);
+        if (error instanceof Error) {
+            throw error;
+        }
+        throw new Error('Failed to enhance the image. Please try again.');
     }
 }

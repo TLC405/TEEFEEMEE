@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { cartoonStyles, CartoonStyle } from '../data/seed';
 import { useCartoonStyleGenerator } from '../hooks/useCartoonStyleGenerator';
 import { ImageUploader, UploadedImage } from '../components/ImageUploader';
-import { cartoonifyImage } from '../services/geminiService';
+import { cartoonifyImage, enhanceImage } from '../services/geminiService';
 
 const Header = () => (
     <header className="bg-comic-blue py-4">
@@ -46,12 +46,12 @@ const StyleCard: React.FC<{ style: CartoonStyle; onClick: () => void; isSelected
   </button>
 );
 
-const ResultDisplay: React.FC<{generatedImage: string | null; isLoading: boolean; error: string | null}> = ({ generatedImage, isLoading, error }) => {
-    if (isLoading) {
+const ResultDisplay: React.FC<{generatedImage: string | null; isLoading: boolean; isEnhancing: boolean; error: string | null}> = ({ generatedImage, isLoading, isEnhancing, error }) => {
+    if (isLoading || isEnhancing) {
         return (
             <div className="w-full h-full flex flex-col items-center justify-center bg-gray-100 rounded-lg animate-pulse" role="status">
                 <svg className="animate-spin h-12 w-12 text-comic-pink" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <p className="mt-4 font-bold text-gray-600">Generating your art...</p>
+                <p className="mt-4 font-bold text-gray-600">{isEnhancing ? 'Applying enhancements...' : 'Generating your art...'}</p>
                 <p className="text-sm text-gray-500">This can take a moment!</p>
             </div>
         )
@@ -59,7 +59,7 @@ const ResultDisplay: React.FC<{generatedImage: string | null; isLoading: boolean
     if (error) {
         return (
             <div className="w-full h-full flex flex-col items-center justify-center bg-red-100 rounded-lg p-4 text-center" role="alert">
-                <p className="font-bold text-red-600">Generation Failed</p>
+                <p className="font-bold text-red-600">Operation Failed</p>
                 <p className="text-sm text-red-500 mt-2">{error}</p>
             </div>
         )
@@ -91,8 +91,13 @@ export const Cartoonifier: React.FC = () => {
     const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null);
     const [selectedStyle, setSelectedStyle] = useState<CartoonStyle | null>(null);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+    const [finalPrompt, setFinalPrompt] = useState<string | null>(null);
+    
     const [isGenerating, setIsGenerating] = useState(false);
     const [generationError, setGenerationError] = useState<string | null>(null);
+    
+    const [isEnhancing, setIsEnhancing] = useState(false);
+
     const [toastError, setToastError] = useState<string | null>(null);
 
     const { status: styleGenStatus, data: stylePromptData, error: styleGenError, generate: generateStylePrompt, reset: resetStyleGenerator } = useCartoonStyleGenerator();
@@ -102,12 +107,19 @@ export const Cartoonifier: React.FC = () => {
     useEffect(() => {
         if (styleGenStatus === 'error') {
             setToastError(styleGenError);
+            setGenerationError(styleGenError); // Also show in the result panel
         }
     }, [styleGenStatus, styleGenError]);
+    
+    useEffect(() => {
+        if (stylePromptData?.prompt && styleGenStatus === 'success') {
+            setFinalPrompt(stylePromptData.prompt);
+        }
+    }, [stylePromptData, styleGenStatus]);
 
     const handleImageUpload = (image: UploadedImage | null) => {
         setUploadedImage(image);
-        handleStartOver(); // Reset everything but the image
+        handleStartOver();
     };
     
     const handleStyleSelect = useCallback((style: CartoonStyle) => {
@@ -115,35 +127,50 @@ export const Cartoonifier: React.FC = () => {
             setToastError("Please upload an image first!");
             return;
         };
+        setGeneratedImage(null);
+        setGenerationError(null);
         setSelectedStyle(style);
-        generateStylePrompt(style.name);
-    }, [generateStylePrompt, uploadedImage]);
+
+        if (style.prompt) {
+            resetStyleGenerator();
+            setFinalPrompt(style.prompt);
+        } else {
+            setFinalPrompt(null);
+            generateStylePrompt(style.name);
+        }
+    }, [generateStylePrompt, uploadedImage, resetStyleGenerator]);
 
     useEffect(() => {
         const cartoonify = async () => {
-            if (uploadedImage && stylePromptData?.prompt && styleGenStatus === 'success') {
+            if (uploadedImage && finalPrompt && selectedStyle) {
                 setIsGenerating(true);
                 setGeneratedImage(null);
                 setGenerationError(null);
                 try {
-                    const result = await cartoonifyImage(uploadedImage.base64, uploadedImage.mimeType, stylePromptData.prompt);
+                    const result = await cartoonifyImage(uploadedImage.base64, uploadedImage.mimeType, finalPrompt);
                     setGeneratedImage(result);
                 } catch (e) {
-                    setGenerationError(e instanceof Error ? e.message : 'An unknown error occurred.');
+                    const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred.';
+                    setGenerationError(errorMessage);
+                    setToastError(errorMessage);
                 } finally {
                     setIsGenerating(false);
+                    setFinalPrompt(null); // Consume the prompt
                 }
             }
         };
         cartoonify();
-    }, [stylePromptData, uploadedImage, styleGenStatus]);
+    }, [finalPrompt, uploadedImage, selectedStyle]);
     
     const handleStartOver = () => {
-        setUploadedImage(null);
+        // Keep the uploaded image, reset everything else.
+        setUploadedImage(prev => prev);
         setSelectedStyle(null);
         setGeneratedImage(null);
         setGenerationError(null);
         setIsGenerating(false);
+        setIsEnhancing(false);
+        setFinalPrompt(null);
         resetStyleGenerator();
     };
     
@@ -157,7 +184,26 @@ export const Cartoonifier: React.FC = () => {
         document.body.removeChild(link);
     };
 
-    const isAppBusy = isGenerating || styleGenStatus === 'loading';
+    const isAppBusy = isGenerating || styleGenStatus === 'loading' || isEnhancing;
+
+    const handleEnhance = async () => {
+        if (!generatedImage || isAppBusy) return;
+
+        setIsEnhancing(true);
+        setGenerationError(null);
+        try {
+            const [meta, base64] = generatedImage.split(',');
+            const mimeType = meta.split(':')[1].split(';')[0];
+            const result = await enhanceImage(base64, mimeType);
+            setGeneratedImage(result);
+        } catch(e) {
+            const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred during enhancement.';
+            setGenerationError(errorMessage);
+            setToastError(errorMessage);
+        } finally {
+            setIsEnhancing(false);
+        }
+    };
 
     return (
       <>
@@ -165,52 +211,66 @@ export const Cartoonifier: React.FC = () => {
         {toastError && <Toast message={toastError} onDismiss={() => setToastError(null)} />}
         <main className="p-4 md:p-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-                {/* Panel 1: Original */}
                 <Panel title="Original" titleColor="#00c2d1">
                     <ImageUploader onImageUpload={handleImageUpload} disabled={isAppBusy} />
                 </Panel>
                 
-                {/* Panel 2: Choose a Style */}
                 <div className="relative">
-                     <Panel title="Choose a Style" titleColor="#00c2d1" className={!uploadedImage ? 'opacity-60' : ''}>
+                     <Panel title={generatedImage ? "Actions" : "Choose a Style"} titleColor="#00c2d1" className={!uploadedImage ? 'opacity-60' : ''}>
                         {!uploadedImage && <div className="absolute inset-0 z-10" title="Upload an image to enable styles"></div>}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-grow">
-                            {cartoonStyles.map(style => (
-                                <StyleCard 
-                                    key={style.name} 
-                                    style={style} 
-                                    onClick={() => handleStyleSelect(style)} 
-                                    isSelected={selectedStyle?.name === style.name} 
-                                    isLoading={styleBeingGenerated === style.name}
-                                    isDisabled={isAppBusy}
-                                    />
-                            ))}
-                        </div>
-                        <div className="mt-4 flex flex-col gap-3">
-                            <button
-                                onClick={handleDownload}
-                                disabled={!generatedImage || isAppBusy}
-                                aria-label="Download generated art"
-                                className="w-full bg-comic-pink text-white font-display text-2xl py-3 rounded-xl border-4 border-comic-black shadow-comic-sm hover:scale-105 active:scale-100 transition-transform disabled:bg-gray-400 disabled:opacity-70 disabled:scale-100 disabled:shadow-none"
-                            >
-                                Download Art
-                            </button>
-                            <button 
-                                onClick={handleStartOver}
-                                disabled={isAppBusy}
-                                aria-label="Start over with a new image"
-                                className="w-full bg-comic-white text-comic-black font-display text-2xl py-3 rounded-xl border-4 border-comic-black shadow-comic-sm hover:scale-105 active:scale-100 transition-transform disabled:opacity-70"
-                            >
-                                Start Over
-                            </button>
-                        </div>
+                        
+                        {!generatedImage ? (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 flex-grow">
+                                {cartoonStyles.map(style => (
+                                    <StyleCard 
+                                        key={style.name} 
+                                        style={style} 
+                                        onClick={() => handleStyleSelect(style)} 
+                                        isSelected={selectedStyle?.name === style.name} 
+                                        isLoading={styleBeingGenerated === style.name}
+                                        isDisabled={isAppBusy}
+                                        />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col justify-between flex-grow animate-fade-in">
+                                <div className="space-y-4">
+                                    <h3 className="text-xl font-bold text-center">✨ Enhancements ✨</h3>
+                                    <button
+                                        onClick={handleEnhance}
+                                        disabled={isAppBusy}
+                                        aria-label="Add nano-enhanced jewelry"
+                                        className="w-full bg-comic-white text-comic-black font-display text-2xl py-3 rounded-xl border-4 border-comic-black shadow-comic-sm hover:scale-105 active:scale-100 transition-transform disabled:opacity-70 disabled:bg-gray-200"
+                                    >
+                                        Add Nano Jewelry
+                                    </button>
+                                </div>
+                                <div className="mt-4 flex flex-col gap-3">
+                                    <button
+                                        onClick={handleDownload}
+                                        disabled={!generatedImage || isAppBusy}
+                                        aria-label="Download generated art"
+                                        className="w-full bg-comic-pink text-white font-display text-2xl py-3 rounded-xl border-4 border-comic-black shadow-comic-sm hover:scale-105 active:scale-100 transition-transform disabled:bg-gray-400 disabled:opacity-70 disabled:scale-100 disabled:shadow-none"
+                                    >
+                                        Download Art
+                                    </button>
+                                    <button 
+                                        onClick={handleStartOver}
+                                        disabled={isAppBusy}
+                                        aria-label="Start over with a new image"
+                                        className="w-full bg-comic-white text-comic-black font-display text-2xl py-3 rounded-xl border-4 border-comic-black shadow-comic-sm hover:scale-105 active:scale-100 transition-transform disabled:opacity-70"
+                                    >
+                                        Start Over
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </Panel>
                 </div>
 
-                {/* Panel 3: TeeFeeMe Version */}
                 <Panel title="TeeFeeMe Version" titleColor="#ff007a">
                     <div className="flex-grow w-full h-full min-h-[300px]" aria-live="polite">
-                       <ResultDisplay generatedImage={generatedImage} isLoading={isGenerating} error={generationError} />
+                       <ResultDisplay generatedImage={generatedImage} isLoading={isGenerating} isEnhancing={isEnhancing} error={generationError} />
                     </div>
                 </Panel>
             </div>
@@ -218,11 +278,10 @@ export const Cartoonifier: React.FC = () => {
                 <p>Powered by Gemini. Built for fun.</p>
                 <p className="mt-4 text-xs font-bold">Suggestions for next version:</p>
                 <ul className="text-xs list-disc list-inside inline-block text-left">
-                    <li>Style Blending: Mix two styles for a unique result.</li>
-                    <li>Negative Prompts: Specify what you *don't* want in the image.</li>
-                    <li>Magic Edit: Select an area and use text to modify it (e.g., "add a hat").</li>
-                    <li>Fine-grained control over details like facial features & accessories ("Face-lock Jewelry").</li>
-                    <li>"Surprise Me!" button for random style combinations.</li>
+                    <li>Style Blending (combine multiple style references).</li>
+                    <li>Magic Edit (add or remove objects with text).</li>
+                    <li>Video Generation (create short cinematic clips from your art).</li>
+                    <li>Negative Prompts (specify what you *don't* want).</li>
                 </ul>
             </footer>
         </main>

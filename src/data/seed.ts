@@ -2,13 +2,20 @@ export interface CartoonStyle {
   name: string;
   description: string;
   thumbnail: string;
+  prompt?: string;
 }
 
 const styleData = [
     { style: 'KHAOS_FLAT2D_THICK', name: 'The Simpsons', source: 'FOX' },
     { style: 'KHAOS_FLAT_PASTEL', name: 'Adventure Time', source: 'Cartoon Network' },
     { style: 'KHAOS_WOBBLE_SCI_FI', name: 'Rick and Morty', source: 'Adult Swim' },
-    { style: 'KHAOS_CUTOUT_2D', name: 'South Park', source: 'Comedy Central' },
+    { 
+      style: 'KHAOS_CUTOUT_2D', 
+      name: 'South Park', 
+      source: 'Comedy Central',
+      description: 'High-fidelity paper cutout style that preserves background details.',
+      prompt: `High-quality cartoon portrait in a South Park–inspired cutout-paper style: simple geometric bodies, oversized round eyes with black pupils, thick black outlines, flat saturated color fills, subtle paper grain texture, minimal shading, bold silhouette. Preserve original pose and clothing details exactly as in the photo. It is critical to keep the original background, including any scenery, objects, and other people — these must remain visually consistent and unchanged from the original photo. Stylize only the main subjects. High detail on facial features but stylized to South Park vocabulary, no text overlays, no watermark.`
+    },
     { style: 'KHAOS_VECTOR_RIG_2D', name: 'Total Drama Island', source: 'Teletoon / Cartoon Network' },
     { style: 'KHAOS_LIMITED_UPA', name: 'Mr. Magoo', source: 'Columbia / UPA' },
     { style: 'KHAOS_FULL_CEL_CLASSIC', name: 'Looney Tunes', source: 'Warner Bros.' },
@@ -47,8 +54,9 @@ const thumbnailColors = [
 
 export const cartoonStyles: CartoonStyle[] = styleData.map((s, index) => ({
     name: s.name,
-    description: `${s.style} style from ${s.source}.`,
+    description: s.description || `${s.style} style from ${s.source}.`,
     thumbnail: thumbnailColors[index % thumbnailColors.length],
+    prompt: s.prompt,
 }));
 
 
